@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>课堂信息展示</title>
+    <link rel="stylesheet" href="./styles.css?v=6" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="panel hero-panel">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">Classroom Info</p>
+            <h1>课堂信息展示</h1>
+            <p class="subtitle">支持课堂排序和学生明细查看。点击课堂名即可查看该课堂的学生数据。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Heatmap</p>
+            <h2 id="heatmapTitle">点击课堂名查看热力图</h2>
+          </div>
+          <div id="heatmapSummary" class="summary">颜色分段：蓝、绿、黄、橙、红（低到高）</div>
+        </div>
+        <div class="heat-legend">
+          <span>蓝</span>
+          <span>绿</span>
+          <span>黄</span>
+          <span>橙</span>
+          <span>红</span>
+        </div>
+        <div id="heatmapMessage" class="message"></div>
+        <div id="heatmapContainer" class="heatmap-empty">请点击课堂列表中的课堂名。</div>
+      </section>
+
+      <section class="panel">
+        <div>
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Items</p>
+              <h2>课堂列表</h2>
+            </div>
+            <div id="itemsSummary" class="summary">加载中...</div>
+          </div>
+          <div id="itemsMessage" class="message"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="table-sort active" data-sort-field="id" data-sort-order="desc">课堂ID<span class="sort-icon">▼</span></th>
+                  <th class="table-sort" data-sort-field="item_name">课堂名<span class="sort-icon">↕</span></th>
+                  <th class="table-sort" data-sort-field="class_name">班级<span class="sort-icon">↕</span></th>
+                  <th class="table-sort" data-sort-field="teacher">教师<span class="sort-icon">↕</span></th>
+                  <th class="table-sort" data-sort-field="student_num">学生数<span class="sort-icon">↕</span></th>
+                  <th class="table-sort" data-sort-field="student_score_sum">课堂总分<span class="sort-icon">↕</span></th>
+                  <th class="table-sort" data-sort-field="created_at">创建时间<span class="sort-icon">↕</span></th>
+                </tr>
+              </thead>
+              <tbody id="itemsBody">
+                <tr><td colspan="7" class="empty">正在加载课堂列表...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./items.js?v=6"></script>
+  </body>
+</html>
