@@ -16,10 +16,15 @@ from app.schemas import (
     ItemListResponse,
     ItemStudentDetail,
     SeatPreview,
+    StudentCommentaryResponse,
+    StudentMetric,
+    StudentProfileResponse,
     StudentImportResult,
 )
 from app.services import (
     detect_seats_from_upload,
+    generate_student_commentary,
+    get_student_profile,
     get_item_detail,
     import_classroom_from_detection,
     list_items,
@@ -162,3 +167,55 @@ def fetch_item_detail(
             for student in students
         ],
     )
+
+
+@app.get("/api/items/{item_id}/students/{student_id}", response_model=StudentProfileResponse)
+def fetch_student_profile(
+    item_id: int,
+    student_id: int,
+    db: Session = Depends(get_db),
+):
+    item, student, metrics = get_student_profile(db, item_id=item_id, student_id=student_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="没有找到这节课。")
+    if student is None:
+        raise HTTPException(status_code=404, detail="没有找到这个学生。")
+
+    return StudentProfileResponse(
+        id=student.id,
+        item_id=item.id,
+        item_name=item.item_name,
+        class_name=item.class_name,
+        teacher=item.teacher,
+        student_name=student.student_name,
+        sex=student.sex,
+        student_number=student.student_number,
+        row_number=student.row_number,
+        column_number=student.column_number,
+        score=student.score,
+        color_hex=student.color_hex,
+        metrics=[StudentMetric(**metric) for metric in metrics],
+    )
+
+
+@app.post(
+    "/api/items/{item_id}/students/{student_id}/commentary",
+    response_model=StudentCommentaryResponse,
+)
+def fetch_student_commentary(
+    item_id: int,
+    student_id: int,
+    db: Session = Depends(get_db),
+):
+    item, student, metrics = get_student_profile(db, item_id=item_id, student_id=student_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="没有找到这节课。")
+    if student is None:
+        raise HTTPException(status_code=404, detail="没有找到这个学生。")
+
+    try:
+        commentary = generate_student_commentary(item, student, metrics)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return StudentCommentaryResponse(commentary=commentary)

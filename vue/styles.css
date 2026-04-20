@@ -139,6 +139,11 @@ button.ghost {
   background: rgba(15, 118, 110, 0.1);
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -221,6 +226,20 @@ button.ghost {
   align-items: center;
   justify-content: center;
   padding: 4px;
+}
+
+.seat-link {
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.seat-link:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 .seat-name {
@@ -310,6 +329,162 @@ th {
   gap: 20px;
 }
 
+.student-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.student-meta-card,
+.metric-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 18px 20px;
+}
+
+.student-meta-card span {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.student-meta-card strong {
+  font-size: 1.2rem;
+}
+
+.student-color-chip {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.metric-list {
+  display: grid;
+  gap: 12px;
+}
+
+.metric-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.metric-compact-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 12px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.metric-explain-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 14px 16px;
+}
+
+.metric-explain-card h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+.metric-explain-list {
+  display: grid;
+  gap: 12px;
+}
+
+.metric-explain-row {
+  display: grid;
+  gap: 6px;
+}
+
+.metric-explain-text {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+
+.ai-commentary-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 18px 20px;
+}
+
+.ai-commentary-card p {
+  margin: 0;
+  line-height: 1.9;
+  color: var(--ink);
+  white-space: pre-wrap;
+}
+
+.metric-row {
+  display: grid;
+  gap: 4px;
+}
+
+.metric-row-main {
+  display: grid;
+  gap: 6px;
+}
+
+.metric-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.metric-row-label-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.metric-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
+.metric-row-label {
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.metric-row-score {
+  font-size: 0.94rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.metric-row-bar {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(31, 42, 55, 0.08);
+  border: 1px solid rgba(31, 42, 55, 0.08);
+}
+
+.metric-row-fill {
+  height: 100%;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+}
+
 .empty {
   text-align: center;
   color: var(--muted);
@@ -317,6 +492,14 @@ th {
 
 @media (max-width: 900px) {
   .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-meta-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .metric-layout {
     grid-template-columns: 1fr;
   }
 
@@ -338,5 +521,11 @@ th {
 
   .seat-name {
     font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .student-meta-grid {
+    grid-template-columns: 1fr;
   }
 }

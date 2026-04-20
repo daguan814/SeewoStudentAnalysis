@@ -41,7 +41,7 @@ class StudentImportResult(BaseModel):
     gender: str
     color_hex: str
     total_score: int
-    detail_scores: list[int]
+    detail_scores: list[int] = Field(..., min_length=5, max_length=5)
 
 
 class ClassroomImportResponse(BaseModel):
@@ -91,3 +91,31 @@ class ItemDetailResponse(BaseModel):
     sort_by: str
     sort_order: str
     students: list[ItemStudentDetail]
+
+
+class StudentMetric(BaseModel):
+    key: str
+    label: str
+    description: str
+    color_hex: str
+    score: int
+
+
+class StudentProfileResponse(BaseModel):
+    id: int
+    item_id: int
+    item_name: str
+    class_name: str
+    teacher: str
+    student_name: str
+    sex: str
+    student_number: int
+    row_number: int
+    column_number: int
+    score: int
+    color_hex: str
+    metrics: list[StudentMetric]
+
+
+class StudentCommentaryResponse(BaseModel):
+    commentary: str

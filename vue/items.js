@@ -61,10 +61,11 @@ function renderHeatmap(item, students) {
       }
       const colorHex = student.color_hex || "#2f6bff";
       const name = student.student_name || `学生${student.student_number}`;
+      const detailUrl = `./student.html?item_id=${encodeURIComponent(item.id)}&student_id=${encodeURIComponent(student.id)}`;
       cells.push(
-        `<div class="seat" style="background:${colorHex}" title="序号 ${student.student_number} ｜ 总分 ${student.score}">
+        `<a class="seat seat-link" data-student-url="${detailUrl}" href="${detailUrl}" style="background:${colorHex}" title="点击查看 ${name} 的详情">
           <span class="seat-name">${name}</span>
-        </div>`
+        </a>`
       );
     }
     rows.push(`<div class="seat-row">${cells.join("")}</div>`);
@@ -117,6 +118,12 @@ async function loadItems() {
       `/api/items?sort_by=${encodeURIComponent(itemSortBy)}&sort_order=${encodeURIComponent(itemSortOrder)}`
     );
     renderItems(data);
+    const params = new URLSearchParams(window.location.search);
+    const initialItemId = Number(params.get("item_id"));
+    if (!selectedItemId && initialItemId && (data.items || []).some((item) => item.id === initialItemId)) {
+      selectedItemId = initialItemId;
+      loadHeatmap();
+    }
     setMessage(itemsMessage, "课堂列表加载完成。", "success");
   } catch (error) {
     setMessage(itemsMessage, error.message, "error");
@@ -148,6 +155,16 @@ document.querySelectorAll(".table-sort").forEach((th) => {
     }
     loadItems();
   });
+});
+
+heatmapContainer.addEventListener("click", (event) => {
+  const link = event.target.closest(".seat-link");
+  if (!link) return;
+  event.preventDefault();
+  const url = link.dataset.studentUrl || link.getAttribute("href");
+  if (url) {
+    window.location.href = url;
+  }
 });
 
 loadItems();

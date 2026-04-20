@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import os
 import random
 import shutil
 from pathlib import Path
+from urllib import error, request
 
 from fastapi import UploadFile
 from sqlalchemy import asc, desc, select
@@ -56,20 +58,20 @@ def normalize_people_inputs(student_lines_text: str, count: int) -> tuple[list[s
 
 def generate_detail_scores(max_total: int) -> list[int]:
     if max_total <= 0:
-        return [0, 0, 0, 0, 0, 0]
+        return [0, 0, 0, 0, 0]
 
     min_total = max(20, int(max_total * 0.72))
     target_total = random.randint(min_total, max_total)
-    base = target_total // 6
-    scores = [base] * 6
-    remainder = target_total - base * 6
+    base = target_total // 5
+    scores = [base] * 5
+    remainder = target_total - base * 5
 
     for index in range(remainder):
         scores[index] += 1
 
-    for _ in range(24):
-        giver = random.randrange(6)
-        receiver = random.randrange(6)
+    for _ in range(20):
+        giver = random.randrange(5)
+        receiver = random.randrange(5)
         if giver == receiver or scores[giver] <= max(0, base - 2):
             continue
         if scores[receiver] >= base + 3:
@@ -186,6 +188,47 @@ ITEM_STUDENT_SORT_FIELDS = {
     "created_at": ItemStudent.created_at,
 }
 
+STUDENT_METRIC_META = [
+    {
+        "key": "warm_red",
+        "label": "暖心红",
+        "description": "自动记录举手频次热力图",
+        "color_hex": "#e0564a",
+    },
+    {
+        "key": "wise_blue",
+        "label": "睿智蓝",
+        "description": "核心探究环节，关注是否说出“因为...”与不同画法",
+        "color_hex": "#356cf0",
+    },
+    {
+        "key": "insight_gold",
+        "label": "洞察金",
+        "description": "拍照上传作业，AI 识别不同解法数量",
+        "color_hex": "#f2bf43",
+    },
+    {
+        "key": "explore_green",
+        "label": "探索绿",
+        "description": "自动统计错题对应的未达标指标",
+        "color_hex": "#32b368",
+    },
+    {
+        "key": "life_orange",
+        "label": "生活橙",
+        "description": "总结与评价环节，记录开心点与未理解点",
+        "color_hex": "#f08a32",
+    },
+]
+
+COLOR_NAME_MAP = {
+    "#2f6bff": "睿智蓝",
+    "#35b56a": "探索绿",
+    "#f3c64d": "洞察金",
+    "#f08a32": "生活橙",
+    "#d94b3d": "暖心红",
+}
+
 
 def _build_order_clause(sort_by: str, sort_order: str, field_map: dict):
     column = field_map.get(sort_by) or next(iter(field_map.values()))
@@ -213,3 +256,135 @@ def get_item_detail(
     )
     students = list(db.scalars(stmt).all())
     return item, students
+
+
+def parse_detail_scores(detail_score: str) -> list[int]:
+    try:
+        values = json.loads(detail_score or "[]")
+    except json.JSONDecodeError:
+        return [0, 0, 0, 0, 0]
+
+    if not isinstance(values, list):
+        return [0, 0, 0, 0, 0]
+
+    normalized = []
+    for value in values[:5]:
+        try:
+            normalized.append(max(0, min(100, int(value))))
+        except (TypeError, ValueError):
+            normalized.append(0)
+
+    while len(normalized) < 5:
+        normalized.append(0)
+    return normalized
+
+
+def get_student_profile(
+    db: Session,
+    item_id: int,
+    student_id: int,
+) -> tuple[Item | None, ItemStudent | None, list[dict]]:
+    item = db.get(Item, item_id)
+    if item is None:
+        return None, None, []
+
+    stmt = select(ItemStudent).where(
+        ItemStudent.item_id == item_id,
+        ItemStudent.id == student_id,
+    )
+    student = db.scalar(stmt)
+    if student is None:
+        return item, None, []
+
+    scores = parse_detail_scores(student.detail_score)
+    metrics = []
+    for index, meta in enumerate(STUDENT_METRIC_META):
+        metrics.append(
+            {
+                "key": meta["key"],
+                "label": meta["label"],
+                "description": meta["description"],
+                "color_hex": meta["color_hex"],
+                "score": scores[index],
+            }
+        )
+
+    return item, student, metrics
+
+
+def generate_student_commentary(
+    item: Item,
+    student: ItemStudent,
+    metrics: list[dict],
+) -> str:
+    api_key = os.getenv("DEEPSEEK_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("DeepSeek API key 未配置。")
+
+    color_name = COLOR_NAME_MAP.get((student.color_hex or "").lower(), "课堂颜色")
+    metric_lines = "\n".join(
+        f"- {metric['label']}：{metric['score']}/20；说明：{metric['description']}"
+        for metric in metrics
+    )
+    prompt = f"""请你扮演一位细致、温和、专业的小学教师助手，基于以下课堂数据生成一段学生点评。
+
+要求：
+1. 用中文输出。
+2. 语气自然、具体，不要空话套话。
+3. 先肯定学生表现亮点，再给出 1 到 2 条可执行建议。
+4. 点评控制在 120 到 180 字。
+5. 不要使用 markdown 标题，不要分点编号，直接输出一段完整点评。
+
+课堂信息：
+- 课堂名：{item.item_name}
+- 班级：{item.class_name}
+- 教师：{item.teacher}
+
+学生信息：
+- 姓名：{student.student_name or f"学生{student.student_number}"}
+- 性别：{student.sex or "未填写"}
+- 座位序号：{student.student_number}
+- 总颜色：{color_name}
+- 总分：{student.score}
+
+五维表现：
+{metric_lines}
+"""
+
+    payload = {
+        "model": "deepseek-chat",
+        "messages": [
+            {
+                "role": "system",
+                "content": "你是一位擅长课堂观察与学生成长反馈的教学助手。",
+            },
+            {"role": "user", "content": prompt},
+        ],
+        "stream": False,
+        "temperature": 0.7,
+    }
+    body = json.dumps(payload).encode("utf-8")
+    req = request.Request(
+        "https://api.deepseek.com/chat/completions",
+        data=body,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+        method="POST",
+    )
+
+    try:
+        with request.urlopen(req, timeout=45) as response:
+            raw = response.read().decode("utf-8")
+    except error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="ignore")
+        raise RuntimeError(f"DeepSeek 接口返回错误：{detail or exc.reason}") from exc
+    except error.URLError as exc:
+        raise RuntimeError(f"无法连接 DeepSeek：{exc.reason}") from exc
+
+    try:
+        data = json.loads(raw)
+        return data["choices"][0]["message"]["content"].strip()
+    except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
+        raise RuntimeError("DeepSeek 返回结果解析失败。") from exc

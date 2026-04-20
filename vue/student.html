@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>学生画像</title>
+    <link rel="stylesheet" href="./styles.css?v=14" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="panel hero-panel">
+        <div class="hero-row">
+          <div>
+            <p class="eyebrow">Student</p>
+            <h1 id="studentTitle">学生详情</h1>
+            <p class="subtitle" id="studentSubtitle">正在加载学生画像...</p>
+          </div>
+          <a class="text-link" id="backToItem" href="./index.html">返回课堂列表</a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="student-meta-grid">
+          <article class="student-meta-card">
+            <span>班级</span>
+            <strong id="studentClass">-</strong>
+          </article>
+          <article class="student-meta-card">
+            <span>性别</span>
+            <strong id="studentSex">-</strong>
+          </article>
+          <article class="student-meta-card">
+            <span>教师</span>
+            <strong id="studentTeacher">-</strong>
+          </article>
+          <article class="student-meta-card">
+            <span>总颜色</span>
+            <strong id="studentScore">-</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Progress</p>
+            <h2>五维表现图</h2>
+          </div>
+        </div>
+        <div id="studentMessage" class="message"></div>
+        <div id="metricList" class="metric-list">
+          <div class="status-card">
+            <strong>正在准备图表...</strong>
+            <p>稍等一下，我们马上把这位同学的画像展示出来。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">AI Comment</p>
+            <h2>AI 点评</h2>
+          </div>
+          <button id="commentaryButton" class="ghost" type="button">生成点评</button>
+        </div>
+        <div id="commentaryMessage" class="message"></div>
+        <article class="ai-commentary-card">
+          <p id="commentaryText">点击右上角按钮后，这里会生成这位学生的课堂点评。</p>
+        </article>
+      </section>
+    </main>
+
+    <script src="./student.js?v=14"></script>
+  </body>
+</html>
