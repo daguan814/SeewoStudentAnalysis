@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -15,6 +18,8 @@ from app.schemas import (
     ItemListEntry,
     ItemListResponse,
     ItemStudentDetail,
+    ParentMessageResponse,
+    ParentMessageUpdateRequest,
     SeatPreview,
     StudentCommentaryResponse,
     StudentMetric,
@@ -28,9 +33,24 @@ from app.services import (
     get_item_detail,
     import_classroom_from_detection,
     list_items,
+    update_parent_message,
 )
 
 
+def load_local_env() -> None:
+    root_dir = Path(__file__).resolve().parents[1]
+    for env_path in (root_dir / ".env", Path(__file__).resolve().parent / ".env"):
+        if not env_path.exists():
+            continue
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+
+
+load_local_env()
 ensure_existing_schema(engine)
 Base.metadata.create_all(bind=engine)
 
@@ -194,8 +214,33 @@ def fetch_student_profile(
         column_number=student.column_number,
         score=student.score,
         color_hex=student.color_hex,
+        parent_message=student.parent_message,
         metrics=[StudentMetric(**metric) for metric in metrics],
     )
+
+
+@app.post(
+    "/api/items/{item_id}/students/{student_id}/parent-message",
+    response_model=ParentMessageResponse,
+)
+def save_parent_message(
+    item_id: int,
+    student_id: int,
+    payload: ParentMessageUpdateRequest,
+    db: Session = Depends(get_db),
+):
+    item, student = update_parent_message(
+        db,
+        item_id=item_id,
+        student_id=student_id,
+        parent_message=payload.parent_message,
+    )
+    if item is None:
+        raise HTTPException(status_code=404, detail="没有找到这节课。")
+    if student is None:
+        raise HTTPException(status_code=404, detail="没有找到这个学生。")
+
+    return ParentMessageResponse(parent_message=student.parent_message)
 
 
 @app.post(

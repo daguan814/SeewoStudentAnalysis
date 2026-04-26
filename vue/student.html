@@ -4,9 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>学生画像</title>
-    <link rel="stylesheet" href="./styles.css?v=14" />
+    <link rel="stylesheet" href="./styles.css?v=17" />
   </head>
   <body>
+    <aside id="aiDoctorPanel" class="ai-doctor-panel" aria-live="polite">
+      <div class="ai-doctor-avatar" aria-hidden="true">
+        <div class="ai-doctor-cap"></div>
+        <div class="ai-doctor-face">
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="ai-doctor-bubble">
+        <div class="ai-doctor-bubble-top">
+          <p class="eyebrow">AI Mentor</p>
+          <strong>小博士点评中</strong>
+        </div>
+        <p id="aiDoctorText" class="ai-doctor-text">点击“生成点评”后，小博士会从这里出现，朗读这位学生的点评内容。</p>
+      </div>
+    </aside>
     <main class="page">
       <section class="panel hero-panel">
         <div class="hero-row">
@@ -33,12 +49,30 @@
             <span>教师</span>
             <strong id="studentTeacher">-</strong>
           </article>
-          <article class="student-meta-card">
-            <span>总颜色</span>
-            <strong id="studentScore">-</strong>
-          </article>
         </div>
       </section>
+
+      <aside class="parent-note-panel" aria-labelledby="parentNoteTitle">
+        <div class="parent-note-header">
+          <div>
+            <p class="eyebrow">Parents</p>
+            <h2 id="parentNoteTitle">家长赠语</h2>
+          </div>
+          <span class="parent-note-badge">悬浮卡片</span>
+        </div>
+        <p class="parent-note-intro">在这里写给孩子一句鼓励、提醒或祝福。内容会按学生单独保存到系统中。</p>
+        <label class="parent-note-field" for="parentNoteText">赠语内容</label>
+        <textarea
+          id="parentNoteText"
+          class="parent-note-textarea"
+          placeholder="例如：愿你继续保持今天的专注和勇气，把每一次思考都变成成长的小台阶。"
+        ></textarea>
+        <div class="parent-note-actions">
+          <button id="parentNoteSave" class="primary" type="button">保存赠语</button>
+          <button id="parentNoteClear" class="ghost" type="button">清空</button>
+        </div>
+        <div id="parentNoteMessage" class="message parent-note-message"></div>
+      </aside>
 
       <section class="panel">
         <div class="panel-header">
@@ -71,6 +105,6 @@
       </section>
     </main>
 
-    <script src="./student.js?v=14"></script>
+    <script src="./student.js?v=17"></script>
   </body>
 </html>

@@ -114,8 +114,17 @@ class StudentProfileResponse(BaseModel):
     column_number: int
     score: int
     color_hex: str
+    parent_message: str
     metrics: list[StudentMetric]
 
 
 class StudentCommentaryResponse(BaseModel):
     commentary: str
+
+
+class ParentMessageUpdateRequest(BaseModel):
+    parent_message: str = Field("", max_length=1000)
+
+
+class ParentMessageResponse(BaseModel):
+    parent_message: str

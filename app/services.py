@@ -190,43 +190,43 @@ ITEM_STUDENT_SORT_FIELDS = {
 
 STUDENT_METRIC_META = [
     {
-        "key": "warm_red",
-        "label": "暖心红",
-        "description": "自动记录举手频次热力图",
+        "key": "interest_red",
+        "label": "兴趣培养",
+        "description": "主动发言、勇敢提问、分享趣事。",
         "color_hex": "#e0564a",
     },
     {
-        "key": "wise_blue",
-        "label": "睿智蓝",
-        "description": "核心探究环节，关注是否说出“因为...”与不同画法",
-        "color_hex": "#356cf0",
-    },
-    {
-        "key": "insight_gold",
-        "label": "洞察金",
-        "description": "拍照上传作业，AI 识别不同解法数量",
+        "key": "habit_yellow",
+        "label": "习惯养成",
+        "description": "认真倾听，专注课堂、书写工整、整理学具、不拖拉、帮助同伴。",
         "color_hex": "#f2bf43",
     },
     {
-        "key": "explore_green",
-        "label": "探索绿",
-        "description": "自动统计错题对应的未达标指标",
+        "key": "thinking_blue",
+        "label": "思维发展",
+        "description": "独特解法、发展规律、创意表达。",
+        "color_hex": "#356cf0",
+    },
+    {
+        "key": "problem_green",
+        "label": "问题解决",
+        "description": "独力攻克难题，纠错反思。",
         "color_hex": "#32b368",
     },
     {
-        "key": "life_orange",
-        "label": "生活橙",
-        "description": "总结与评价环节，记录开心点与未理解点",
-        "color_hex": "#f08a32",
+        "key": "value_purple",
+        "label": "成果增值",
+        "description": "作业进步，达成目标，成果优秀。",
+        "color_hex": "#8a56e2",
     },
 ]
 
 COLOR_NAME_MAP = {
-    "#2f6bff": "睿智蓝",
-    "#35b56a": "探索绿",
-    "#f3c64d": "洞察金",
-    "#f08a32": "生活橙",
-    "#d94b3d": "暖心红",
+    "#2f6bff": "思维发展",
+    "#35b56a": "问题解决",
+    "#f3c64d": "习惯养成",
+    "#f08a32": "成果增值",
+    "#d94b3d": "兴趣培养",
 }
 
 
@@ -310,6 +310,31 @@ def get_student_profile(
         )
 
     return item, student, metrics
+
+
+def update_parent_message(
+    db: Session,
+    item_id: int,
+    student_id: int,
+    parent_message: str,
+) -> tuple[Item | None, ItemStudent | None]:
+    item = db.get(Item, item_id)
+    if item is None:
+        return None, None
+
+    stmt = select(ItemStudent).where(
+        ItemStudent.item_id == item_id,
+        ItemStudent.id == student_id,
+    )
+    student = db.scalar(stmt)
+    if student is None:
+        return item, None
+
+    student.parent_message = parent_message.strip()
+    db.add(student)
+    db.commit()
+    db.refresh(student)
+    return item, student
 
 
 def generate_student_commentary(

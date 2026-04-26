@@ -24,6 +24,146 @@ body {
     linear-gradient(180deg, #f6f1ea 0%, #efe4d2 100%);
 }
 
+.ai-doctor-panel {
+  position: fixed;
+  top: 132px;
+  left: 18px;
+  width: min(420px, calc(100vw - 36px));
+  padding: 18px 18px 18px 128px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  box-shadow: 0 24px 54px rgba(17, 24, 39, 0.16);
+  backdrop-filter: blur(14px);
+  transform: translateX(calc(-100% - 28px));
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 260ms ease, opacity 260ms ease;
+  z-index: 24;
+}
+
+.ai-doctor-panel.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.ai-doctor-avatar {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  width: 110px;
+  height: 122px;
+  flex: 0 0 auto;
+}
+
+.ai-doctor-cap {
+  position: absolute;
+  left: 16px;
+  top: 0;
+  width: 78px;
+  height: 24px;
+  border-radius: 16px 16px 10px 10px;
+  background: linear-gradient(135deg, #0f766e, #164e63);
+}
+
+.ai-doctor-cap::after {
+  content: "";
+  position: absolute;
+  left: 32px;
+  top: 12px;
+  width: 12px;
+  height: 34px;
+  border-radius: 999px;
+  background: #f7fafc;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.18);
+}
+
+.ai-doctor-face {
+  position: absolute;
+  left: 6px;
+  bottom: 0;
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff9ef 0%, #fde7cf 100%);
+  border: 3px solid rgba(15, 118, 110, 0.16);
+  box-shadow: inset 0 -6px 0 rgba(240, 138, 50, 0.12);
+}
+
+.ai-doctor-face::before,
+.ai-doctor-face::after {
+  content: "";
+  position: absolute;
+  top: 38px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #253041;
+}
+
+.ai-doctor-face::before {
+  left: 24px;
+}
+
+.ai-doctor-face::after {
+  right: 24px;
+}
+
+.ai-doctor-face span {
+  position: absolute;
+  left: 31px;
+  bottom: 21px;
+  width: 28px;
+  height: 12px;
+  border-bottom: 4px solid #ef7d5d;
+  border-radius: 0 0 14px 14px;
+}
+
+.ai-doctor-bubble {
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(246, 251, 250, 0.96) 0%, rgba(255, 255, 255, 0.9) 100%);
+  border: 1px solid rgba(15, 118, 110, 0.12);
+}
+
+.ai-doctor-bubble-top {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.ai-doctor-bubble-top .eyebrow {
+  margin-bottom: 0;
+}
+
+.ai-doctor-text {
+  margin: 0;
+  min-height: 5.4em;
+  color: var(--ink);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.ai-doctor-panel.speaking .ai-doctor-avatar {
+  animation: doctor-bob 0.9s ease-in-out infinite;
+}
+
+.ai-doctor-panel.speaking .ai-doctor-bubble {
+  box-shadow: 0 0 0 6px rgba(15, 118, 110, 0.06);
+}
+
+@keyframes doctor-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
 .page {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
@@ -46,6 +186,17 @@ body {
   font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
   font-size: 1.9rem;
   font-weight: 700;
+}
+
+.hero-title-gradient {
+  display: inline-block;
+  background: linear-gradient(135deg, #0f766e 0%, #1d4ed8 38%, #7c3aed 68%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-wrap: balance;
+  letter-spacing: 0.02em;
+  text-shadow: 0 10px 24px rgba(29, 78, 216, 0.12);
 }
 
 .hero-row {
@@ -331,7 +482,7 @@ th {
 
 .student-meta-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -353,14 +504,72 @@ th {
   font-size: 1.2rem;
 }
 
-.student-color-chip {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
+.parent-note-panel {
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 250, 243, 0.92) 100%);
+  box-shadow: 0 22px 48px rgba(112, 78, 22, 0.16);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.parent-note-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.parent-note-header h2 {
+  font-size: 1.28rem;
+}
+
+.parent-note-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 6px 10px;
   border-radius: 999px;
-  margin-right: 8px;
-  vertical-align: -2px;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--primary-deep);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.parent-note-intro {
+  margin: 14px 0 12px;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 0.93rem;
+}
+
+.parent-note-field {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.parent-note-textarea {
+  min-height: 184px;
+  resize: vertical;
+  line-height: 1.8;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.parent-note-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.parent-note-message {
+  margin-top: 10px;
+  margin-bottom: 0;
+  min-height: 24px;
 }
 
 .metric-list {
@@ -490,7 +699,36 @@ th {
   color: var(--muted);
 }
 
+@media (min-width: 1760px) {
+  .parent-note-panel {
+    position: fixed;
+    top: 236px;
+    left: calc(50% + 584px);
+    width: min(320px, calc(100vw - (50% + 612px)));
+    max-height: calc(100vh - 48px);
+    overflow: auto;
+    margin-bottom: 0;
+    z-index: 20;
+  }
+}
+
 @media (max-width: 900px) {
+  .ai-doctor-panel {
+    position: sticky;
+    top: 12px;
+    left: auto;
+    width: auto;
+    margin: 12px 16px 0;
+    padding-left: 118px;
+    transform: translateY(-10px);
+  }
+
+  .ai-doctor-panel.visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
@@ -505,7 +743,9 @@ th {
 
   .actions,
   .panel-header,
-  .hero-row {
+  .hero-row,
+  .parent-note-header,
+  .parent-note-actions {
     flex-direction: column;
     align-items: stretch;
   }
@@ -525,6 +765,16 @@ th {
 }
 
 @media (max-width: 640px) {
+  .ai-doctor-panel {
+    padding: 108px 14px 14px;
+  }
+
+  .ai-doctor-avatar {
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+  }
+
   .student-meta-grid {
     grid-template-columns: 1fr;
   }

@@ -4,7 +4,6 @@ const itemsSummary = document.getElementById("itemsSummary");
 const itemsMessage = document.getElementById("itemsMessage");
 const itemsBody = document.getElementById("itemsBody");
 const heatmapTitle = document.getElementById("heatmapTitle");
-const heatmapSummary = document.getElementById("heatmapSummary");
 const heatmapMessage = document.getElementById("heatmapMessage");
 const heatmapContainer = document.getElementById("heatmapContainer");
 
@@ -74,7 +73,6 @@ function renderHeatmap(item, students) {
   heatmapContainer.className = "heatmap-board";
   heatmapContainer.innerHTML = rows.join("");
   heatmapTitle.textContent = `${item.item_name} · 热力图`;
-  heatmapSummary.textContent = `${item.class_name} · ${item.teacher} · ${students.length} 人`;
 }
 
 function renderItems(data) {

@@ -9,6 +9,8 @@ __pycache__/
 
 .venv/
 venv/
+.env
+app/.env
 
 app/uploads/*.png
 !app/uploads/.gitkeep

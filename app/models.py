@@ -38,6 +38,9 @@ class ItemStudent(Base):
     row_number: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="排")
     column_number: Mapped[int] = mapped_column(Integer, nullable=False, default=0, comment="列")
     color_hex: Mapped[str] = mapped_column(String(7), nullable=False, default="#2f6bff", comment="颜色")
+    parent_message: Mapped[str] = mapped_column(
+        String(1000), nullable=False, default="", comment="家长赠语"
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, default=datetime.utcnow, comment="创建时间"
     )

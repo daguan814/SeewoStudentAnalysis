@@ -43,6 +43,10 @@ def ensure_existing_schema(engine: Engine) -> None:
             statements.append("ADD COLUMN `column_number` INT NOT NULL DEFAULT 0 COMMENT '列'")
         if "color_hex" not in student_columns:
             statements.append("ADD COLUMN `color_hex` VARCHAR(7) NOT NULL DEFAULT '#2f6bff' COMMENT '颜色'")
+        if "parent_message" not in student_columns:
+            statements.append(
+                "ADD COLUMN `parent_message` VARCHAR(1000) NOT NULL DEFAULT '' COMMENT '家长赠语'"
+            )
         if "created_at" not in student_columns:
             statements.append(
                 "ADD COLUMN `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间'"
