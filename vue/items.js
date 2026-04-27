@@ -1,4 +1,4 @@
-const apiBase = ["127.0.0.1", "localhost"].includes(window.location.hostname) ? "http://127.0.0.1:8000" : "";
+const apiBase = "";
 
 const itemsSummary = document.getElementById("itemsSummary");
 const itemsMessage = document.getElementById("itemsMessage");

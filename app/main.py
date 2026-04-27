@@ -5,6 +5,8 @@ from pathlib import Path
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from app.database import Base, engine, get_db
@@ -55,6 +57,8 @@ ensure_existing_schema(engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Seewo Student Analysis API")
+ROOT_DIR = Path(__file__).resolve().parents[1]
+FRONTEND_DIR = ROOT_DIR / "vue"
 
 app.add_middleware(
     CORSMiddleware,
@@ -68,6 +72,21 @@ app.add_middleware(
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
+
+
+@app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
+def frontend_index():
+    return FileResponse(FRONTEND_DIR / "index.html")
+
+
+@app.api_route("/admin", methods=["GET", "HEAD"], include_in_schema=False)
+def frontend_admin():
+    return FileResponse(FRONTEND_DIR / "admin.html")
+
+
+@app.api_route("/student", methods=["GET", "HEAD"], include_in_schema=False)
+def frontend_student():
+    return FileResponse(FRONTEND_DIR / "student.html")
 
 
 @app.post("/api/classroom-image/preview", response_model=ImagePreviewResponse)
@@ -264,3 +283,6 @@ def fetch_student_commentary(
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     return StudentCommentaryResponse(commentary=commentary)
+
+
+app.mount("/", StaticFiles(directory=FRONTEND_DIR), name="frontend")

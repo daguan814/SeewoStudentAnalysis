@@ -10,12 +10,13 @@
 
 ## 本地运行
 
-1. 后端：
-   - `cd /Users/shuijing/Documents/Code/SeewoStudentAnalysis/app`
-   - `uvicorn main:app --reload --port 8000`
-2. 前端（静态）：
-   - `cd /Users/shuijing/Documents/Code/SeewoStudentAnalysis/vue`
-   - `python3 -m http.server 4173`
+1. 一体化启动：
+   - `cd /Users/shuijing/Documents/Code/SeewoStudentAnalysis`
+   - `uvicorn app.main:app --reload --port 8000`
+2. 打开页面：
+   - 首页：`http://127.0.0.1:8000/`
+   - 图片入库：`http://127.0.0.1:8000/admin`
+   - 学生画像：`http://127.0.0.1:8000/student?item_id=10&student_id=473`
 
 ## 备注
 
